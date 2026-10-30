@@ -4,7 +4,6 @@ target/
 .vscode/
 .env
 .env.*
-!.env.example
 *.log
 Thumbs.db
 .DS_Store

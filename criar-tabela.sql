@@ -1,4 +1,3 @@
--- Executar uma vez no usuário Oracle utilizado em DB_USER (Oracle 12c ou superior).
 CREATE TABLE DDD_POKEMONS (
     CODIGO NUMBER GENERATED ALWAYS AS IDENTITY,
     NOME VARCHAR2(100 CHAR) NOT NULL,
