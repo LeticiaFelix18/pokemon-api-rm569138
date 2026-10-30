@@ -3,7 +3,6 @@ package br.com.fiap.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class ConnectionFactory {
     private ConnectionFactory() { }
@@ -21,12 +20,7 @@ public class ConnectionFactory {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Driver Oracle não encontrado.", e);
         }
-        Properties properties = new Properties();
-        properties.setProperty("user", user);
-        properties.setProperty("password", password);
-        properties.setProperty("oracle.net.CONNECT_TIMEOUT", "10000");
-        properties.setProperty("oracle.jdbc.ReadTimeout", "15000");
-        // Cada operação fecha sua conexão com try-with-resources no DAO.
-        return DriverManager.getConnection(url, properties);
+        // A conexão é fechada pelo try-with-resources no DAO.
+        return DriverManager.getConnection(url, user, password);
     }
 }

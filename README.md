@@ -3,15 +3,25 @@
 Projeto individual do Checkpoint 6 de Java — FIAP.  
 RM: **569138**
 
-API para cadastrar, consultar, atualizar e excluir Pokémon, desenvolvida com Java 25, Spring Boot, Maven e Oracle JDBC.
+API para cadastrar, consultar, atualizar e excluir Pokémon, seguindo os exercícios das aulas A39–A44. Usa Java 25, Spring Boot, Maven e Oracle JDBC.
+
+## Organização
+
+- `to`: dados do Pokémon e Bean Validation.
+- `resource`: requisições HTTP, respostas e CorsFilter.
+- `bo`: regra da data de captura no passado.
+- `dao`: comandos SQL e ConnectionFactory.
+- `static`: front-end com HTML, CSS e JavaScript.
 
 ## Usar a Pokédex
 
 Abra [Minha Pokédex](https://pokemon-api-rm569138.onrender.com/) para visualizar a coleção com imagens. Use **Adicionar Pokémon** para cadastrar, o lápis para editar e o botão de exclusão para remover um registro após confirmar. A busca filtra pelo nome ou código; o seletor filtra pela categoria.
 
-O front está em `src/main/resources/static`, com HTML, CSS e JavaScript. Ele consome a Pokemon API usando `fetch`. As imagens vêm da [PokéAPI](https://pokeapi.co/), buscadas pelo nome da espécie; os dados das capturas permanecem no Oracle. Nomes sem imagem correspondente continuam podendo ser cadastrados.
+O front está em `src/main/resources/static` e consome `/pokemon` usando `fetch`, na própria aplicação. As imagens vêm da [PokéAPI](https://pokeapi.co/), pelo nome da espécie. São um complemento visual; os dados das capturas permanecem no Oracle. Nomes sem imagem correspondente continuam podendo ser cadastrados.
 
-## Usar no Insomnia
+## API
+
+O front permite executar o CRUD pelo navegador. O Insomnia também pode ser usado para testar os métodos HTTP.
 
 Endereço da API:
 
@@ -43,7 +53,7 @@ Para POST e PUT, selecione **Body → JSON** e preencha:
 }
 ```
 
-A data da captura deve estar no passado. Nome e categoria são obrigatórios; altura e peso devem ser positivos. Dados inválidos retornam **400**. Busca ou exclusão de um código inexistente retornam **404**.
+A data da captura deve ser anterior a hoje, conforme a A40. Hoje e datas futuras retornam **400**. Nome e categoria são obrigatórios; altura e peso devem ser positivos. Busca ou exclusão de um código inexistente retornam **404**. O PUT retorna **201**, conforme a A43.
 
 O código é gerado pelo Oracle no POST. Cada envio de POST cria um novo cadastro. A exclusão bem-sucedida retorna **204**, sem corpo na resposta.
 

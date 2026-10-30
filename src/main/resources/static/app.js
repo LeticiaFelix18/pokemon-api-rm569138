@@ -1,5 +1,5 @@
-// O front consome a mesma API já usada no Insomnia.
-const API_URL = 'https://pokemon-api-rm569138.onrender.com/pokemon';
+// Usa a API da própria aplicação, tanto no IntelliJ quanto no Render.
+const API_URL = '/pokemon';
 const cards = document.querySelector('#cards');
 const search = document.querySelector('#search');
 const category = document.querySelector('#category');
@@ -11,7 +11,6 @@ let pokemonToDelete = null;
 let saving = false;
 let deleting = false;
 let toastTimer;
-const imageCache = new Map();
 
 function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -56,19 +55,25 @@ async function apiRequest(path = '', options = {}) {
         if (response.status === 404) throw new Error('Esse Pokémon não foi encontrado. Atualize a coleção.');
         throw new Error('A API não conseguiu acessar os dados. Tente novamente em alguns instantes.');
     }
-    return response.status === 204 ? null : response.json();
+    if (response.status === 204) {
+        return null;
+    }
+    return response.json();
 }
 
 // As imagens são consultadas pelo nome. Não são gravadas na tabela Oracle.
 async function pokemonImage(name) {
     const slug = normalize(name).replace(/♀/g, '-f').replace(/♂/g, '-m').replace(/[.'’]/g, '').replace(/\s+/g, '-');
-    if (!imageCache.has(slug)) {
-        imageCache.set(slug, fetch(`https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(slug)}`, { signal: AbortSignal.timeout(12000) })
-            .then(response => response.ok ? response.json() : null)
-            .then(data => data?.sprites?.other?.['official-artwork']?.front_default || data?.sprites?.front_default || null)
-            .catch(() => null));
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(slug)}`, { signal: AbortSignal.timeout(12000) });
+        if (!response.ok) {
+            return null;
+        }
+        const data = await response.json();
+        return data.sprites.other['official-artwork'].front_default || data.sprites.front_default;
+    } catch (error) {
+        return null;
     }
-    return imageCache.get(slug);
 }
 
 function createCard(pokemon) {
@@ -140,7 +145,16 @@ async function loadCollection() {
         pokemons = await apiRequest();
         const currentCategory = category.value;
         category.replaceChildren(new Option('Todas as categorias', ''));
-        [...new Set(pokemons.map(pokemon => pokemon.categoria))].sort().forEach(value => category.append(new Option(value, value)));
+        const categories = [];
+        for (const pokemon of pokemons) {
+            if (!categories.includes(pokemon.categoria)) {
+                categories.push(pokemon.categoria);
+            }
+        }
+        categories.sort();
+        for (const value of categories) {
+            category.append(new Option(value, value));
+        }
         if ([...category.options].some(option => option.value === currentCategory)) category.value = currentCategory;
         renderCollection();
     } catch (error) {
@@ -156,11 +170,12 @@ async function loadCollection() {
 function openForm(pokemon = null) {
     form.reset();
     document.querySelector('#form-error').hidden = true;
-    document.querySelector('#pokemon-code').value = pokemon?.codigo || '';
+    document.querySelector('#pokemon-code').value = '';
     document.querySelector('#form-title').textContent = pokemon ? 'Editar captura' : 'Nova captura';
     document.querySelector('#save-button').textContent = pokemon ? 'Salvar alterações' : 'Salvar captura';
     document.querySelector('#pokemon-date').max = yesterday();
     if (pokemon) {
+        document.querySelector('#pokemon-code').value = pokemon.codigo;
         document.querySelector('#pokemon-name').value = pokemon.nome;
         document.querySelector('#pokemon-height').value = pokemon.altura;
         document.querySelector('#pokemon-weight').value = pokemon.peso;
@@ -195,7 +210,17 @@ form.addEventListener('submit', async event => {
     saveButton.disabled = true;
     saveButton.textContent = 'Salvando…';
     try {
-        await apiRequest(code ? `/${code}` : '', { method: code ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pokemon) });
+        let path = '';
+        let method = 'POST';
+        if (code) {
+            path = `/${code}`;
+            method = 'PUT';
+        }
+        await apiRequest(path, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pokemon)
+        });
         dialog.close();
         showToast(code ? 'Captura atualizada!' : 'Pokémon adicionado à coleção!');
         search.value = '';

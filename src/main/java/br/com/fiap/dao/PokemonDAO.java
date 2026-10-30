@@ -16,7 +16,14 @@ public class PokemonDAO {
              PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                pokemons.add(mapear(rs));
+                PokemonTO pokemon = new PokemonTO();
+                pokemon.setCodigo(rs.getLong("codigo"));
+                pokemon.setNome(rs.getString("nome"));
+                pokemon.setAltura(rs.getDouble("altura"));
+                pokemon.setPeso(rs.getDouble("peso"));
+                pokemon.setCategoria(rs.getString("categoria"));
+                pokemon.setDataDaCaptura(rs.getDate("data_da_captura").toLocalDate());
+                pokemons.add(pokemon);
             }
             return pokemons;
         } catch (SQLException e) {
@@ -30,7 +37,17 @@ public class PokemonDAO {
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, codigo);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next() ? mapear(rs) : null;
+                if (rs.next()) {
+                    PokemonTO pokemon = new PokemonTO();
+                    pokemon.setCodigo(rs.getLong("codigo"));
+                    pokemon.setNome(rs.getString("nome"));
+                    pokemon.setAltura(rs.getDouble("altura"));
+                    pokemon.setPeso(rs.getDouble("peso"));
+                    pokemon.setCategoria(rs.getString("categoria"));
+                    pokemon.setDataDaCaptura(rs.getDate("data_da_captura").toLocalDate());
+                    return pokemon;
+                }
+                return null;
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Erro ao consultar pokémon.", e);
@@ -71,7 +88,10 @@ public class PokemonDAO {
             ps.setString(4, pokemon.getCategoria());
             ps.setDate(5, Date.valueOf(pokemon.getDataDaCaptura()));
             ps.setLong(6, pokemon.getCodigo());
-            return ps.executeUpdate() > 0 ? pokemon : null;
+            if (ps.executeUpdate() > 0) {
+                return pokemon;
+            }
+            return null;
         } catch (SQLException e) {
             throw new IllegalStateException("Erro ao atualizar pokémon.", e);
         }
@@ -86,16 +106,5 @@ public class PokemonDAO {
         } catch (SQLException e) {
             throw new IllegalStateException("Erro ao excluir pokémon.", e);
         }
-    }
-
-    private PokemonTO mapear(ResultSet rs) throws SQLException {
-        PokemonTO pokemon = new PokemonTO();
-        pokemon.setCodigo(rs.getLong("codigo"));
-        pokemon.setNome(rs.getString("nome"));
-        pokemon.setAltura(rs.getDouble("altura"));
-        pokemon.setPeso(rs.getDouble("peso"));
-        pokemon.setCategoria(rs.getString("categoria"));
-        pokemon.setDataDaCaptura(rs.getDate("data_da_captura").toLocalDate());
-        return pokemon;
     }
 }
