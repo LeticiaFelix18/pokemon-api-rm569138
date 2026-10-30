@@ -264,28 +264,3 @@ A interface e a API são servidas pela mesma aplicação. O JavaScript chama `/p
 
 Alterações enviadas à branch conectada ao serviço podem iniciar uma nova publicação automática. Confira no painel do Render se a nova publicação foi concluída.
 
-## Dúvidas comuns
-
-**Preciso abrir o IntelliJ para apresentar a versão publicada?**
-
-Não. Abra o link da Pokédex. Para mostrar o código, abra o projeto no IntelliJ ou no GitHub com uma conta que tenha acesso ao repositório.
-
-**Preciso instalar o Insomnia?**
-
-Não para usar a Pokédex. O Insomnia é uma alternativa para testar a API diretamente.
-
-**Por que aparece `[]` na API?**
-
-A consulta funcionou, mas não existem registros na tabela consultada.
-
-**Por que não aceita a data de hoje?**
-
-A validação exige uma captura anterior ao dia atual. Utilize uma data passada.
-
-**Por que apareceu erro ao consultar Pokémon?**
-
-Confira as variáveis do banco, as credenciais, a existência da tabela no usuário conectado e a conexão com o Oracle.
-
-**O que mostrar se o professor pedir o código?**
-
-Apresente o fluxo Resource → BO → DAO, o TO com suas validações e a ConnectionFactory. A interface fica em `src/main/resources/static`.
