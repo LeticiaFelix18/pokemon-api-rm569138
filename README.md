@@ -5,6 +5,12 @@ RM: **569138**
 
 API para cadastrar, consultar, atualizar e excluir Pokémon, desenvolvida com Java 25, Spring Boot, Maven e Oracle JDBC.
 
+## Usar a Pokédex
+
+Abra [Minha Pokédex](https://pokemon-api-rm569138.onrender.com/) para visualizar a coleção com imagens. Use **Adicionar Pokémon** para cadastrar, o lápis para editar e o botão de exclusão para remover um registro após confirmar. A busca filtra pelo nome ou código; o seletor filtra pela categoria.
+
+O front está em `src/main/resources/static`, com HTML, CSS e JavaScript. Ele consome a Pokemon API usando `fetch`. As imagens vêm da [PokéAPI](https://pokeapi.co/), buscadas pelo nome da espécie; os dados das capturas permanecem no Oracle. Nomes sem imagem correspondente continuam podendo ser cadastrados.
+
 ## Usar no Insomnia
 
 Endereço da API:

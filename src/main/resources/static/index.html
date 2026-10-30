@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111513">
+    <meta name="description" content="Minha Pokédex: uma coleção de Pokémon capturados, conectada à Pokemon API.">
+    <title>Minha Pokédex</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="./" aria-label="Minha Pokédex, início">
+            <span class="pokeball" aria-hidden="true"></span> Minha <strong>Pokédex</strong>
+        </a>
+        <span class="header-label">UMA COLEÇÃO DE DESCOBERTAS</span>
+        <span class="student">FIAP <span>·</span> RM 569138</span>
+    </header>
+
+    <main>
+        <section class="intro" aria-labelledby="page-title">
+            <div>
+                <p class="eyebrow"><span></span> DIÁRIO DE CAPTURAS</p>
+                <h1 id="page-title">Toda captura<br>tem uma <em>história.</em></h1>
+                <p class="intro-description">Seus encontros, suas descobertas.<br>Guarde cada Pokémon em um só lugar.</p>
+                <button class="button button-red" id="add-pokemon"><span aria-hidden="true">+</span> Adicionar Pokémon</button>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <div class="hero-orbit"></div>
+                <span class="hero-number">NO. 002</span>
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png" alt="" width="340" height="340">
+                <span class="hero-caption">UM MUNDO INTEIRO PARA DESCOBRIR</span>
+            </div>
+        </section>
+
+        <section class="collection" aria-labelledby="collection-title">
+            <div class="collection-heading">
+                <div><p class="eyebrow">SUA POKÉDEX</p><h2 id="collection-title">Minha coleção <span id="collection-count">—</span></h2></div>
+                <button class="button button-quiet" id="reload" aria-label="Atualizar coleção"><span aria-hidden="true">↻</span> Atualizar</button>
+            </div>
+            <div class="toolbar">
+                <label class="search"><span aria-hidden="true">⌕</span><input type="search" id="search" placeholder="Buscar por nome ou código" aria-label="Buscar por nome ou código"></label>
+                <label class="category"><span class="sr-only">Filtrar por categoria</span><select id="category"><option value="">Todas as categorias</option></select></label>
+                <span class="result-count" id="result-count" aria-live="polite"></span>
+            </div>
+            <div class="notice" id="notice" role="status" hidden></div>
+            <div class="loading" id="loading" role="status"><span class="spinner"></span><p>Buscando suas capturas…<small>A primeira conexão pode levar alguns segundos.</small></p></div>
+            <div class="cards" id="cards" aria-busy="true"></div>
+            <div class="empty-state" id="empty-state" hidden>
+                <span class="empty-symbol" aria-hidden="true">◎</span>
+                <h3 id="empty-title">Sua aventura começa aqui.</h3>
+                <p id="empty-description">Adicione seu primeiro Pokémon à coleção.</p>
+                <button class="button button-red" id="empty-add">Adicionar Pokémon</button>
+            </div>
+        </section>
+    </main>
+
+    <footer><span class="footer-brand">Minha Pokédex <span>© 2026</span></span><p>Projeto acadêmico · FIAP · Java</p><a href="https://pokeapi.co/" target="_blank" rel="noopener noreferrer">Imagens: PokéAPI ↗</a></footer>
+
+    <dialog id="pokemon-dialog" aria-labelledby="form-title">
+        <div class="dialog-heading"><div><p class="eyebrow">DIÁRIO DE CAPTURAS</p><h2 id="form-title">Nova captura</h2></div><button type="button" class="close-button" id="close-dialog" aria-label="Fechar formulário">×</button></div>
+        <p class="form-description">Preencha os dados do seu encontro.</p>
+        <form id="pokemon-form">
+            <input type="hidden" id="pokemon-code">
+            <label>Nome do Pokémon<input id="pokemon-name" name="nome" maxlength="100" placeholder="Ex.: Bulbasaur" required><small>Use o nome da espécie para encontrar sua imagem.</small></label>
+            <div class="form-row"><label>Altura (m)<input id="pokemon-height" name="altura" type="number" min="0.01" max="999999.99" step="0.01" placeholder="0,70" required></label><label>Peso (kg)<input id="pokemon-weight" name="peso" type="number" min="0.01" max="999999.99" step="0.01" placeholder="6,90" required></label></div>
+            <label>Categoria<input id="pokemon-category" name="categoria" maxlength="100" placeholder="Ex.: Semente" required></label>
+            <label>Data da captura<input id="pokemon-date" name="dataDaCaptura" type="date" required><small>A captura deve ser anterior a hoje.</small></label>
+            <p class="form-error" id="form-error" role="alert" hidden></p>
+            <div class="dialog-actions"><button type="button" class="button button-outline" id="cancel-form">Cancelar</button><button type="submit" class="button button-red" id="save-button">Salvar captura</button></div>
+        </form>
+    </dialog>
+
+    <dialog class="delete-dialog" id="delete-dialog" aria-labelledby="delete-title">
+        <p class="eyebrow">REMOVER DA COLEÇÃO</p><h2 id="delete-title">Excluir Pokémon?</h2>
+        <p id="delete-description"></p><p class="delete-warning">Essa ação não pode ser desfeita.</p>
+        <p class="form-error" id="delete-error" role="alert" hidden></p>
+        <div class="dialog-actions"><button type="button" class="button button-outline" id="cancel-delete">Cancelar</button><button type="button" class="button button-red" id="confirm-delete">Excluir Pokémon</button></div>
+    </dialog>
+    <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>
